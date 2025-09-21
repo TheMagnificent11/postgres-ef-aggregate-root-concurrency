@@ -9,7 +9,7 @@ using Pizzeria.Store.Api.Data;
 namespace Pizzeria.Store.Api.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20250921123415_PizzaOrder")]
+    [Migration("20250921152209_PizzaOrder")]
     partial class PizzaOrder
     {
         /// <inheritdoc />
@@ -37,10 +37,12 @@ namespace Pizzeria.Store.Api.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("DeliveryAddress")
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -50,7 +52,8 @@ namespace Pizzeria.Store.Api.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("PreparedDateTime")
                         .HasColumnType("timestamp with time zone");
@@ -63,10 +66,14 @@ namespace Pizzeria.Store.Api.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<long>("Version")
-                        .HasColumnType("bigint");
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
@@ -108,11 +115,13 @@ namespace Pizzeria.Store.Api.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -122,17 +131,23 @@ namespace Pizzeria.Store.Api.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
 
-                    b.Property<long>("Version")
-                        .HasColumnType("bigint");
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
