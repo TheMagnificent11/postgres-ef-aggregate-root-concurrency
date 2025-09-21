@@ -17,18 +17,9 @@ public sealed class PizzaOrderingTests
     [Fact]
     public async Task Should_CreateOrder_When_OrderIsPlaced()
     {
-        // Arrange
         using var httpClient = await this.factory.GetServiceClientAsync(ServiceNames.PizzaStoreApi);
-        using var request = new HttpRequestMessage(HttpMethod.Post, Endpoints.StoreApi.Orders);
 
-        // Act
-        using var response = await httpClient.SendAsync(request);
-
-        // Assert
-        response.EnsureSuccessStatusCode();
-
-        var order = await this.factory.GetLatestOrder();
-        order.Should().NotBeNull();
+        await this.CreateOrderAsync(httpClient);
     }
 
     [Fact]
@@ -36,12 +27,9 @@ public sealed class PizzaOrderingTests
     {
         // Arrange
         using var httpClient = await this.factory.GetServiceClientAsync(ServiceNames.PizzaStoreApi);
-        using var createOrderRequest = new HttpRequestMessage(HttpMethod.Post, Endpoints.StoreApi.Orders);
-        using var createOrderResponse = await httpClient.SendAsync(createOrderRequest);
 
-        createOrderResponse.EnsureSuccessStatusCode();
-        var order = await this.factory.GetLatestOrder();
-        order.Should().NotBeNull();
+        var order = await this.CreateOrderAsync(httpClient);
+        Assert.NotNull(order);
         using var addPizzaRequest = new HttpRequestMessage(
             HttpMethod.Put,
             Endpoints.StoreApi.GetAddPizzaToOrderEndpoint(order.Id, Menu.PizzaIds.QuattroFormaggi));
@@ -60,5 +48,22 @@ public sealed class PizzaOrderingTests
         var pizzaInOrder = order.Pizzas.First();
         Assert.Equal(Menu.PizzaIds.QuattroFormaggi, pizzaInOrder.PizzaId);
         Assert.Equal(1, pizzaInOrder.Quantity);
+    }
+
+    private async Task<Order> CreateOrderAsync(HttpClient httpClient)
+    {
+        // Arrange
+        using var request = new HttpRequestMessage(HttpMethod.Post, Endpoints.StoreApi.Orders);
+
+        // Act
+        using var response = await httpClient.SendAsync(request);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+
+        var order = await this.factory.GetLatestOrder();
+        Assert.NotNull(order);
+
+        return order;
     }
 }

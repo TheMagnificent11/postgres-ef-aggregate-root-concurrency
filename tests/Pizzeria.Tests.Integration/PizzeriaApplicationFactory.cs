@@ -4,8 +4,8 @@ using Aspire.Hosting.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Pizzeria.Common;
-using Pizzeria.Store.Data;
-using Pizzeria.Store.Domain;
+using Pizzeria.Store.Api.Data;
+using Pizzeria.Store.Api.Domain;
 using Xunit;
 
 namespace Pizzeria.Tests.Integration;
@@ -21,7 +21,6 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        // https://learn.microsoft.com/en-us/dotnet/aspire/testing/manage-app-host?pivots=xunit
         this.builder = await DistributedApplicationTestingBuilder.CreateAsync<Projects.Pizzeria_AppHost>();
         this.builder.Services.ConfigureHttpClientDefaults(x =>
         {
@@ -35,7 +34,7 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
 
         await this.resourceNotificationService
             .WaitForResourceAsync(ServiceNames.PizzaStoreApi, KnownResourceStates.Running)
-            .WaitAsync(TimeSpan.FromMinutes(1));
+            .WaitAsync(TimeSpan.FromMinutes(10)); // 10 minutes because Dockers images may need to be pulled
 
         var storeDbConnectionString = await this.app.GetConnectionStringAsync(ServiceNames.PizzaStoreDatabase);
         var storeDbOptionsBuilder = new DbContextOptionsBuilder<StoreDbContext>();

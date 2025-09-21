@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Pizzeria.AppHost\Pizzeria.AppHost.csproj" />
+    <ProjectReference Include="..\..\src\Pizzeria.Store.Api\Pizzeria.Store.Api.csproj" />
   </ItemGroup>
 
 </Project>
