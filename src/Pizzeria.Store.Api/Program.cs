@@ -1,46 +1,71 @@
-using FastEndpoints;
-using Lewee.Infrastructure.AspNet.Auth;
-using Lewee.Infrastructure.AspNet.Observability;
-using Lewee.Infrastructure.AspNet.SignalR;
-using Lewee.Infrastructure.Data;
-using Lewee.Infrastructure.PostgreSQL;
+using Microsoft.EntityFrameworkCore;
 using Pizzeria.Common;
 using Pizzeria.ServiceDefaults;
-using Pizzeria.Store.Application;
-using Pizzeria.Store.Data;
-using Pizzeria.Store.Domain;
+using Pizzeria.Store.Api.Data;
+using Pizzeria.Store.Api.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 builder.Services
-    .AddAuthenticatedUserService()
-    .AddLeweePostgreSQL<StoreDbContext>(
+    .AddPostgres<StoreDbContext>(
         builder.Configuration.GetConnectionString(ServiceNames.PizzaStoreDatabase)!,
-        typeof(Pizza).Assembly,
         StoreDbContext.SchemaName)
-    .AddLeweeDatabaseServices<StoreDbContext>(typeof(Pizza).Assembly)
-    .AddLeweeDatabaseSeeder<StoreDbContext, StoreSeeder>()
-    .AddPizzaStoreApplication()
-    .AddCorrelationIdServices()
-    .ConfigureSignalR()
-    .AddFastEndpoints()
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen();
+    .AddDatabaseSeeder<StoreDbContext, StoreSeeder>();
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-app.UseFastEndpoints();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
+app.MapDefaultEndpoints();
+app.UseRouting();
+
+app.MapGet(
+    Endpoints.StoreApi.Pizzas,
+    async (StoreDbContext db, CancellationToken cancellationToken) =>
+    {
+        var pizzas = await db.Pizzas.ToListAsync(cancellationToken);
+
+        return Results.Ok(pizzas);
+    });
+
+app.MapPost(
+    Endpoints.StoreApi.Orders,
+    async (StoreDbContext db, CancellationToken cancellationToken) =>
+    {
+        var order = Order.StartNewOrder(userId: "todo");
+
+        db.Orders.Add(order);
+
+        await db.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok();
+    });
+
+app.MapPut(
+    Endpoints.StoreApi.AddPizzaToOrder,
+    async (Guid orderId, Guid pizzaId, StoreDbContext db, CancellationToken cancellationToken) =>
+    {
+        var pizza = Menu.Pizzas.FirstOrDefault(x => x.Id == pizzaId);
+        if (pizza is null)
+        {
+            return Results.BadRequest("Invalid pizza ID.");
+        }
+
+        var order = await db.Orders
+            .Include(x => x.Pizzas)
+            .FirstOrDefaultAsync(x => x.Id == orderId, cancellationToken);
+        if (order is null)
+        {
+            return Results.NotFound("Order not found.");
+        }
+
+        order.AddPizza(pizza);
+
+        await db.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok();
+    });
 
 await app.Services.MigrateDatabaseAsync<StoreDbContext>(seedData: true);
 

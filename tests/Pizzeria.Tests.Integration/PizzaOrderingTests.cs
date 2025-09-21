@@ -1,7 +1,6 @@
 ﻿using Pizzeria.Common;
-using FluentAssertions;
 using Xunit;
-using Pizzeria.Store.Domain;
+using Pizzeria.Store.Api.Domain;
 
 namespace Pizzeria.Tests.Integration;
 
@@ -54,12 +53,12 @@ public sealed class PizzaOrderingTests
         addPizzaResponse.EnsureSuccessStatusCode();
 
         order = await this.factory.GetOrder(order.Id);
-        order.Should().NotBeNull();
-        order.Pizzas.Should().NotBeNull();
-        order.Pizzas.Should().ContainSingle();
+        Assert.NotNull(order);
+        Assert.NotNull(order.Pizzas);
+        Assert.Single(order.Pizzas);
 
         var pizzaInOrder = order.Pizzas.First();
-        pizzaInOrder.Id.Should().Be(Menu.PizzaIds.QuattroFormaggi);
-        pizzaInOrder.Quantity.Should().Be(1);
+        Assert.Equal(Menu.PizzaIds.QuattroFormaggi, pizzaInOrder.PizzaId);
+        Assert.Equal(1, pizzaInOrder.Quantity);
     }
 }
