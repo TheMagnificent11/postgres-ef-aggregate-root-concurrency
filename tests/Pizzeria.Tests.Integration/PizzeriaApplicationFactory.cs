@@ -28,7 +28,7 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
         });
 
         this.app = await this.builder.BuildAsync();
-        this.resourceNotificationService= this.app.Services.GetRequiredService<ResourceNotificationService>();
+        this.resourceNotificationService = this.app.Services.GetRequiredService<ResourceNotificationService>();
 
         await this.app.StartAsync();
 
