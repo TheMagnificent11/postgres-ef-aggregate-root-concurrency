@@ -8,7 +8,8 @@ public static class DataServiceExtensions
     public static IServiceCollection AddPostgres<T>(
         this IServiceCollection services,
         string connectionString,
-        string? schema)
+        string? schema,
+        Action<string>? sqlLogger = null)
         where T : DbContext
     {
         services
@@ -19,6 +20,21 @@ public static class DataServiceExtensions
                     x => x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, schema));
 
                 options.AddInterceptors(new AuditDetailsSaveChangesInterceptor());
+
+                // Enable SQL logging - this will log to the configured logger
+                options.EnableSensitiveDataLogging(); // Shows parameter values
+                options.EnableDetailedErrors(); // Shows more detailed error information
+
+                // Custom SQL logging with better formatting
+                var logAction = sqlLogger ?? (message => Console.WriteLine($"[EF SQL] {DateTime.Now:HH:mm:ss.fff} - {message}"));
+                
+                options.LogTo(message =>
+                {
+                    if (message.Contains("Executing DbCommand"))
+                    {
+                        logAction(message);
+                    }
+                }, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
             });
 
         return services;
