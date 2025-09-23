@@ -9,6 +9,7 @@ public static class DataServiceExtensions
         this IServiceCollection services,
         string connectionString,
         string? schema,
+        bool isDevelopment = false,
         Action<string>? sqlLogger = null)
         where T : DbContext
     {
@@ -21,20 +22,26 @@ public static class DataServiceExtensions
 
                 options.AddInterceptors(new AuditDetailsSaveChangesInterceptor());
 
-                // Enable SQL logging - this will log to the configured logger
-                options.EnableSensitiveDataLogging(); // Shows parameter values
-                options.EnableDetailedErrors(); // Shows more detailed error information
-
-                // Custom SQL logging with better formatting
-                var logAction = sqlLogger ?? (message => Console.WriteLine($"[EF SQL] {DateTime.Now:HH:mm:ss.fff} - {message}"));
-                
-                options.LogTo(message =>
+                if (isDevelopment)
                 {
-                    if (message.Contains("Executing DbCommand"))
+                    options.EnableSensitiveDataLogging();
+                }
+
+                options.EnableDetailedErrors();
+
+                var logger = provider.GetRequiredService<ILogger<T>>();
+                var logAction = sqlLogger ?? (sql => logger.LogInformation($"[EF SQL] {{SQL}}", sql));
+
+                options.LogTo(
+                    message =>
                     {
-                        logAction(message);
-                    }
-                }, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
+                        if (message.Contains("Executing DbCommand"))
+                        {
+                            logAction(message);
+                        }
+                    },
+                    [DbLoggerCategory.Database.Command.Name],
+                    LogLevel.Information);
             });
 
         return services;

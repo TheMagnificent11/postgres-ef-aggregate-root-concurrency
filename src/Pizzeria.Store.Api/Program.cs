@@ -10,7 +10,8 @@ builder.AddServiceDefaults();
 builder.Services
     .AddPostgres<StoreDbContext>(
         builder.Configuration.GetConnectionString(ServiceNames.PizzaStoreDatabase)!,
-        StoreDbContext.SchemaName)
+        StoreDbContext.SchemaName,
+        builder.Environment.IsDevelopment())
     .AddDatabaseSeeder<StoreDbContext, StoreSeeder>();
 
 var app = builder.Build();
