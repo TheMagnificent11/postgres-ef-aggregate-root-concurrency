@@ -1,0 +1,34 @@
+on:
+    workflow_call:
+      inputs:
+        is-pr:
+          required: false
+          type: boolean
+
+jobs:
+    buildAndTest:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+
+        - name: Setup .NET
+          uses: actions/setup-dotnet@v3
+          with:
+            dotnet-version: 9.0.*
+
+        - name: Install Aspire Workload
+          run: dotnet workload install aspire
+
+        - name: Install HTTPS development certificate
+          run: dotnet dev-certs https --trust
+
+        - name: Install Dependencies
+          run: dotnet restore --nologo
+
+        - name: Build
+          run: dotnet build --configuration Release --no-restore --nologo
+
+        - name: Test
+          run: dotnet test --configuration Release --no-build --nologo
