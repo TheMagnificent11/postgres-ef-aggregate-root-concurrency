@@ -9,8 +9,7 @@ public static class DataServiceExtensions
         this IServiceCollection services,
         string connectionString,
         string? schema,
-        bool isDevelopment = false,
-        Action<string>? sqlLogger = null)
+        bool isDevelopment = false)
         where T : DbContext
     {
         services
@@ -25,23 +24,22 @@ public static class DataServiceExtensions
                 if (isDevelopment)
                 {
                     options.EnableSensitiveDataLogging();
-                }
+                    options.EnableDetailedErrors();
 
-                options.EnableDetailedErrors();
+                    var logger = provider.GetRequiredService<ILogger<T>>();
+                    void logAction(string? sql) => logger.LogInformation($"[EF SQL] {{SQL}}", sql);
 
-                var logger = provider.GetRequiredService<ILogger<T>>();
-                var logAction = sqlLogger ?? (sql => logger.LogInformation($"[EF SQL] {{SQL}}", sql));
-
-                options.LogTo(
-                    message =>
-                    {
-                        if (message.Contains("Executing DbCommand"))
+                    options.LogTo(
+                        message =>
                         {
-                            logAction(message);
-                        }
-                    },
-                    [DbLoggerCategory.Database.Command.Name],
-                    LogLevel.Information);
+                            if (message.Contains("Executing DbCommand"))
+                            {
+                                logAction(message);
+                            }
+                        },
+                        [DbLoggerCategory.Database.Command.Name],
+                        LogLevel.Information);
+                }
             });
 
         return services;
