@@ -12,50 +12,20 @@ jobs:
         - uses: actions/checkout@v3
           with:
             fetch-depth: 0
+
         - name: Setup .NET
           uses: actions/setup-dotnet@v3
           with:
             dotnet-version: 9.0.*
+
         - name: Install Aspire Workload
           run: dotnet workload install aspire
-        - name: Install GitVersion
-          uses: gittools/actions/gitversion/setup@v0
-          with:
-            versionSpec: '6.0.0'
-            preferLatestVersion: true
-            includePrerelease: false
-        - name: Determine Version
-          id: version
-          uses: gittools/actions/gitversion/execute@v0
-          with:
-            useConfigFile: true
+
         - name: Install Dependencies
-          run: dotnet restore ./lewee-samms.sln --nologo
+          run: dotnet restore --nologo
+
         - name: Build
-          run: dotnet build ./lewee-samms.sln --configuration Release --no-restore --nologo
-        # - name: Test
-        #  run: dotnet test ./lewee-samms.sln --configuration Release --no-build --nologo --settings coverage.runsettings --results-directory ./coverage
+          run: dotnet build --configuration Release --no-restore --nologo
+
         - name: Test
-          run: |
-            for project in $(find ./tests -name '*.csproj' ! -name '*Integration*'); do
-              dotnet test $project --configuration Release --no-build --nologo --settings coverage.runsettings --results-directory ./coverage
-            done
-        # - name: Code Coverage Report
-        #   uses: irongut/CodeCoverageSummary@v1.3.0
-        #   if: ${{ inputs.is-pr == true }}
-        #   with:
-        #     filename: coverage/**/coverage.cobertura.xml
-        #     badge: true
-        #     format: markdown
-        #     hide_branch_rate: false
-        #     hide_complexity: false
-        #     indicators: true
-        #     output: both
-        # - name: Add Coverage PR Comment
-        #   uses: marocchino/sticky-pull-request-comment@v2
-        #   if: ${{ inputs.is-pr == true }}
-        #   with:
-        #     recreate: true
-        #     path: code-coverage-results.md
-        # - name: Publish
-        #   run: dotnet publish ./lewee-samms.sln --configuration Release --nologo --version-suffix ${{ steps.version.outputs.fullSemVer }}
+          run: dotnet test --configuration Release --no-build --nologo
