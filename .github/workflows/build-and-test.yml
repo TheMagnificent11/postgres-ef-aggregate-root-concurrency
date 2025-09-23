@@ -21,6 +21,9 @@ jobs:
         - name: Install Aspire Workload
           run: dotnet workload install aspire
 
+        - name: Install HTTPS development certificate
+          run: dotnet dev-certs https --trust
+
         - name: Install Dependencies
           run: dotnet restore --nologo
 
