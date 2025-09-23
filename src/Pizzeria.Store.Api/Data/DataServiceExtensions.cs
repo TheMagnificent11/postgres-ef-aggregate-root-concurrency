@@ -27,14 +27,14 @@ public static class DataServiceExtensions
                     options.EnableDetailedErrors();
 
                     var logger = provider.GetRequiredService<ILogger<T>>();
-                    void logAction(string? sql) => logger.LogInformation($"[EF SQL] {{SQL}}", sql);
+
 
                     options.LogTo(
                         message =>
                         {
                             if (message.Contains("Executing DbCommand"))
                             {
-                                logAction(message);
+                                logger.LogInformation($"[EF SQL] {{SQL}}", message);
                             }
                         },
                         [DbLoggerCategory.Database.Command.Name],
