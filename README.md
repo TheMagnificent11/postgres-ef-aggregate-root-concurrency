@@ -70,7 +70,7 @@ Also, the Aspire testing library makes it very easy to write integration tests.
 
 1. Clone the repository
 2. Navigate to the repository folder
-3. Execute `dotnet test` in the terminal
+3. Execute `dotnet test --logger console --verbosity:detailed` in the terminal
 
 The first test that just creates an order will pass.
 
