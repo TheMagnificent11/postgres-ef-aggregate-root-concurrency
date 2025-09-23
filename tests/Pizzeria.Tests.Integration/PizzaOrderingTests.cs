@@ -22,7 +22,7 @@ public sealed class PizzaOrderingTests
         await this.CreateOrderAsync(httpClient);
     }
 
-    [Fact(Skip = "There's a concurrency bug that requires fixing")]
+    [Fact]
     public async Task Should_AddPizzaToOrder_When_PizzaIsAdded()
     {
         // Arrange
