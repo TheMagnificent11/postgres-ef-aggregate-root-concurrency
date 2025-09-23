@@ -45,14 +45,10 @@ public sealed class AuditDetailsSaveChangesInterceptor : SaveChangesInterceptor
                 entry.Entity.ApplyModificationTrackingData(modifiedBy: "todo");
             }
 
+            // Handle aggregate root concurrency when children change
             if (entry.State == EntityState.Unchanged && entry.IsAggregateRoot())
             {
-                // Check if this aggregate root has any child entities that are added, modified, or deleted
-                var hasChangedChildren = context.ChangeTracker.Entries()
-                    .Where(e => e.State != EntityState.Unchanged)
-                    .Any(e => HasForeignKeyTo(e, entry));
-
-                if (hasChangedChildren)
+                if (entry.HasChangedRelatedEntities())
                 {
                     entry.Entity.ApplyModificationTrackingData(modifiedBy: "todo");
                     // Mark the aggregate root as modified so PostgreSQL will update the xmin concurrency token
@@ -62,32 +58,4 @@ public sealed class AuditDetailsSaveChangesInterceptor : SaveChangesInterceptor
         }
     }
 
-    private static bool HasForeignKeyTo(EntityEntry childEntry, EntityEntry parentEntry)
-    {
-        // Check if the child entity has any foreign key properties that reference the parent
-        foreach (var foreignKey in childEntry.Metadata.GetForeignKeys())
-        {
-            var principalType = foreignKey.PrincipalEntityType.ClrType;
-            if (principalType == parentEntry.Entity.GetType())
-            {
-                // Get the foreign key value from the child
-                var foreignKeyProperties = foreignKey.Properties;
-                var principalKeyProperties = foreignKey.PrincipalKey.Properties;
-                
-                // Compare the key values
-                for (int i = 0; i < foreignKeyProperties.Count; i++)
-                {
-                    var childKeyValue = childEntry.Property(foreignKeyProperties[i].Name).CurrentValue;
-                    var parentKeyValue = parentEntry.Property(principalKeyProperties[i].Name).CurrentValue;
-                    
-                    if (Equals(childKeyValue, parentKeyValue))
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
 }
