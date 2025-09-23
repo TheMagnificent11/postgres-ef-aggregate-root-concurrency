@@ -38,9 +38,7 @@ Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException
    at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.<SaveChangesAsync>d__115.MoveNext()
    at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.<ExecuteAsync>d__7`2.MoveNext()
    at Microsoft.EntityFrameworkCore.DbContext.<SaveChangesAsync>d__63.MoveNext()
-   at Program.<>c.<<<Main>$>b__0_2>d.MoveNext() in C:\Users\sajiw\source\repos\postgres-ef-aggregate-root-concurrency\src\Pizzeria.Store.Api\Program.cs:line 65
-   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteTaskResult>d__142`1.MoveNext()
-   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.<Invoke>d__14.MoveNext()
+   at Pizzeria.Store.Api.Handlers.AddPizzaToOrderHandler.<HandleAsync>d__0.MoveNext() in C:\Users\sajiw\source\repos\postgres-ef-aggregate-root-concurrency\src\Pizzeria.Store.Api\Handlers\AddPizzaToOrderHandler.cs:line 34
 ```
 
 This works with SQL Server EF Core; it may not evaluate the concurrency token on the aggregate root, but it does not encounter any exception.
