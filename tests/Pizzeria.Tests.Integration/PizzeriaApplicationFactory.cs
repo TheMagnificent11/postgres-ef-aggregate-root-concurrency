@@ -87,6 +87,9 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
             await this.app.DisposeAsync();
         }
 
-        // Remove DisposeAsync call for builder as it's not available in this version
+        if (this.builder != null)
+        {
+            await this.builder.DisposeAsync();
+        }
     }
 }
