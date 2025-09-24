@@ -6,8 +6,7 @@ var databaseServer = builder.AddPostgres(ServiceNames.DatabaseServer);
 var pizzaStoreDatabase = databaseServer.AddDatabase(ServiceNames.PizzaStoreDatabase);
 
 builder.AddProject<Projects.Pizzeria_Store_Api>(ServiceNames.PizzaStoreApi)
-    .WithReference(pizzaStoreDatabase)
-    .WaitFor(pizzaStoreDatabase);
+    .WithReference(pizzaStoreDatabase);
 
 var app = builder.Build();
 
