@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pizzeria.Store.Data\Pizzeria.Store.Data.csproj" />
+    <ProjectReference Include="..\Pizzeria.Store.Domain\Pizzeria.Store.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
