@@ -10,8 +10,9 @@ public sealed class OrderPizzaConfiguration : IEntityTypeConfiguration<OrderPizz
     {
         builder.HasKey(x => x.Id);
         
+        // Since we're manually setting the ID, we need to configure it properly
         builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
 
         builder
             .HasOne(op => op.Order)
