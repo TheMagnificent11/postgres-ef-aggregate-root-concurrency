@@ -3,12 +3,13 @@
 #nullable disable
 
 namespace Pizzeria.Store.Api.SqlServer.Migrations;
+
+/// <inheritdoc />
+public partial class PizzaOrder : Migration
+{
     /// <inheritdoc />
-    public partial class PizzaOrder : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
             migrationBuilder.EnsureSchema(
                 name: "sto");
 
@@ -95,11 +96,11 @@ namespace Pizzeria.Store.Api.SqlServer.Migrations;
                 schema: "sto",
                 table: "OrderPizza",
                 column: "PizzaId");
-        }
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
             migrationBuilder.DropTable(
                 name: "OrderPizza",
                 schema: "sto");
@@ -111,5 +112,5 @@ namespace Pizzeria.Store.Api.SqlServer.Migrations;
             migrationBuilder.DropTable(
                 name: "Pizzas",
                 schema: "sto");
-        }
     }
+}
