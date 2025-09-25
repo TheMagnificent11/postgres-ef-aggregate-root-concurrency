@@ -115,7 +115,7 @@ public static class DataServiceExtensions
                 return;
             }
 
-            await dbContext.Database.EnsureCreatedAsync(cancellationTokenSource.Token);
+            await dbContext.Database.MigrateAsync(cancellationTokenSource.Token);
 
             if (!seedData)
             {

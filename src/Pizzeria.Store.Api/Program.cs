@@ -35,99 +35,23 @@ app.UseRouting();
 
 // PostgreSQL endpoints
 app.MapGet(Endpoints.PostgresStoreApi.Pizzas, async (StorePostgresDbContext db, ILogger<Program> logger, CancellationToken cancellationToken) =>
-{
-    try
-    {
-        var pizzas = await GetPizzasHandler<StorePostgresDbContext>.HandleAsync(db, cancellationToken);
-        return Results.Ok(pizzas);
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while getting pizzas from PostgreSQL");
-        return Results.Problem("An error occurred while processing your request.");
-    }
-});
+    await GetPizzasHandler<StorePostgresDbContext>.HandleAsync(db, logger, cancellationToken));
 
 app.MapPost(Endpoints.PostgresStoreApi.Orders, async (StorePostgresDbContext db, ILogger<Program> logger, CancellationToken cancellationToken) =>
-{
-    try
-    {
-        await CreateOrderHandler<StorePostgresDbContext>.HandleAsync(db, cancellationToken);
-        return Results.Ok();
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while creating order in PostgreSQL");
-        return Results.Problem("An error occurred while processing your request.");
-    }
-});
+    await CreateOrderHandler<StorePostgresDbContext>.HandleAsync(db, logger, cancellationToken));
 
 app.MapPut(Endpoints.PostgresStoreApi.AddPizzaToOrder, async (Guid orderId, Guid pizzaId, StorePostgresDbContext db, ILogger<Program> logger, CancellationToken cancellationToken) =>
-{
-    try
-    {
-        await AddPizzaToOrderHandler<StorePostgresDbContext>.HandleAsync(orderId, pizzaId, db, cancellationToken);
-        return Results.Ok();
-    }
-    catch (ArgumentException ex)
-    {
-        logger.LogWarning(ex, "Invalid argument while adding pizza to order in PostgreSQL");
-        return Results.BadRequest(ex.Message);
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while adding pizza to order in PostgreSQL");
-        return Results.Problem("An error occurred while processing your request.");
-    }
-});
+    await AddPizzaToOrderHandler<StorePostgresDbContext>.HandleAsync(orderId, pizzaId, db, logger, cancellationToken));
 
 // SQL Server endpoints
 app.MapGet(Endpoints.SqlServerStoreApi.Pizzas, async (StoreSqlServerDbContext db, ILogger<Program> logger, CancellationToken cancellationToken) =>
-{
-    try
-    {
-        var pizzas = await GetPizzasHandler<StoreSqlServerDbContext>.HandleAsync(db, cancellationToken);
-        return Results.Ok(pizzas);
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while getting pizzas from SQL Server");
-        return Results.Problem("An error occurred while processing your request.");
-    }
-});
+    await GetPizzasHandler<StoreSqlServerDbContext>.HandleAsync(db, logger, cancellationToken));
 
 app.MapPost(Endpoints.SqlServerStoreApi.Orders, async (StoreSqlServerDbContext db, ILogger<Program> logger, CancellationToken cancellationToken) =>
-{
-    try
-    {
-        await CreateOrderHandler<StoreSqlServerDbContext>.HandleAsync(db, cancellationToken);
-        return Results.Ok();
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while creating order in SQL Server");
-        return Results.Problem("An error occurred while processing your request.");
-    }
-});
+    await CreateOrderHandler<StoreSqlServerDbContext>.HandleAsync(db, logger, cancellationToken));
 
 app.MapPut(Endpoints.SqlServerStoreApi.AddPizzaToOrder, async (Guid orderId, Guid pizzaId, StoreSqlServerDbContext db, ILogger<Program> logger, CancellationToken cancellationToken) =>
-{
-    try
-    {
-        await AddPizzaToOrderHandler<StoreSqlServerDbContext>.HandleAsync(orderId, pizzaId, db, cancellationToken);
-        return Results.Ok();
-    }
-    catch (ArgumentException ex)
-    {
-        logger.LogWarning(ex, "Invalid argument while adding pizza to order in SQL Server");
-        return Results.BadRequest(ex.Message);
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while adding pizza to order in SQL Server");
-        return Results.Problem("An error occurred while processing your request.");
-    }
-});
+    await AddPizzaToOrderHandler<StoreSqlServerDbContext>.HandleAsync(orderId, pizzaId, db, logger, cancellationToken));
 
 // Migrate and seed both databases
 await app.Services.MigrateDatabaseAsync<StorePostgresDbContext>(seedData: true);
