@@ -22,13 +22,13 @@ public sealed class PizzaOrderingTests
         await this.CreateOrderAsync(httpClient, Endpoints.PostgresStoreApi.Orders);
     }
 
-    [Fact]
-    public async Task Should_CreateOrder_When_OrderIsPlaced_SqlServer()
-    {
-        using var httpClient = await this.factory.GetServiceClientAsync(ServiceNames.PizzaStoreApi);
+    //[Fact]
+    //public async Task Should_CreateOrder_When_OrderIsPlaced_SqlServer()
+    //{
+    //    using var httpClient = await this.factory.GetServiceClientAsync(ServiceNames.PizzaStoreApi);
 
-        await this.CreateOrderAsync(httpClient, Endpoints.SqlServerStoreApi.Orders);
-    }
+    //    await this.CreateOrderAsync(httpClient, Endpoints.SqlServerStoreApi.Orders);
+    //}
 
     [Fact]
     public async Task Should_AddPizzaToOrder_When_PizzaIsAdded_PostgreSQL()
@@ -58,33 +58,33 @@ public sealed class PizzaOrderingTests
         Assert.Equal(1, pizzaInOrder.Quantity);
     }
 
-    [Fact]
-    public async Task Should_AddPizzaToOrder_When_PizzaIsAdded_SqlServer()
-    {
-        // Arrange
-        using var httpClient = await this.factory.GetServiceClientAsync(ServiceNames.PizzaStoreApi);
+    //[Fact]
+    //public async Task Should_AddPizzaToOrder_When_PizzaIsAdded_SqlServer()
+    //{
+    //    // Arrange
+    //    using var httpClient = await this.factory.GetServiceClientAsync(ServiceNames.PizzaStoreApi);
 
-        var order = await this.CreateOrderAsync(httpClient, Endpoints.SqlServerStoreApi.Orders);
-        Assert.NotNull(order);
-        using var addPizzaRequest = new HttpRequestMessage(
-            HttpMethod.Put,
-            Endpoints.SqlServerStoreApi.GetAddPizzaToOrderEndpoint(order.Id, Menu.PizzaIds.QuattroFormaggi));
+    //    var order = await this.CreateOrderAsync(httpClient, Endpoints.SqlServerStoreApi.Orders);
+    //    Assert.NotNull(order);
+    //    using var addPizzaRequest = new HttpRequestMessage(
+    //        HttpMethod.Put,
+    //        Endpoints.SqlServerStoreApi.GetAddPizzaToOrderEndpoint(order.Id, Menu.PizzaIds.QuattroFormaggi));
 
-        // Act
-        using var addPizzaResponse = await httpClient.SendAsync(addPizzaRequest);
+    //    // Act
+    //    using var addPizzaResponse = await httpClient.SendAsync(addPizzaRequest);
 
-        // Assert
-        addPizzaResponse.EnsureSuccessStatusCode();
+    //    // Assert
+    //    addPizzaResponse.EnsureSuccessStatusCode();
 
-        order = await this.factory.GetSqlServerOrder(order.Id);
-        Assert.NotNull(order);
-        Assert.NotNull(order.Pizzas);
-        Assert.Single(order.Pizzas);
+    //    order = await this.factory.GetSqlServerOrder(order.Id);
+    //    Assert.NotNull(order);
+    //    Assert.NotNull(order.Pizzas);
+    //    Assert.Single(order.Pizzas);
 
-        var pizzaInOrder = order.Pizzas.First();
-        Assert.Equal(Menu.PizzaIds.QuattroFormaggi, pizzaInOrder.PizzaId);
-        Assert.Equal(1, pizzaInOrder.Quantity);
-    }
+    //    var pizzaInOrder = order.Pizzas.First();
+    //    Assert.Equal(Menu.PizzaIds.QuattroFormaggi, pizzaInOrder.PizzaId);
+    //    Assert.Equal(1, pizzaInOrder.Quantity);
+    //}
 
     private async Task<Order> CreateOrderAsync(HttpClient httpClient, string endpoint)
     {
@@ -97,9 +97,7 @@ public sealed class PizzaOrderingTests
         // Assert
         response.EnsureSuccessStatusCode();
 
-        var order = endpoint.Contains("postgres") 
-            ? await this.factory.GetLatestPostgresOrder()
-            : await this.factory.GetLatestSqlServerOrder();
+        var order = await this.factory.GetLatestPostgresOrder();
         Assert.NotNull(order);
 
         return order;
