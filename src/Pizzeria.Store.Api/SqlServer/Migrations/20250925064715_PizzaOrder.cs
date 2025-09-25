@@ -11,7 +11,7 @@ public partial class PizzaOrder : Migration
     protected override void Up(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.EnsureSchema(
-        name: "sto");
+            name: "sto");
 
         migrationBuilder.CreateTable(
             name: "Orders",
