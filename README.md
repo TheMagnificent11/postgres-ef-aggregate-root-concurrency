@@ -6,9 +6,11 @@ I've always used SQL Sever with Entity Framework, but I recently acquired an ARM
 
 So I decided to try PostgreSQL with Entity Framework Core.
 
-Unfortunately, the PostgreSQL EF Core seems to behave differently than the SQL Server EF Core when it comes to concurrency tokens.
+This repository initially was created to investigate differences between PostgreSQL and SQL Server EF Core behavior with concurrency tokens in Domain-Driven Design scenarios.
 
-This is repository with a more minimal (I understand that this is not exactly minimal, but I wanted to keep the code as close as possible to my real project) example that reproduces the issue.
+However, after adding SQL Server implementation (PR #10), it was discovered that both PostgreSQL and SQL Server exhibit the same behavior: when adding child entities to an aggregate root, the EF change tracker appears to treat the child entity addition as a modification rather than an addition.
+
+This repository attempts to create a minimal reproduction, but due to the complexity of the user-case, there are a lot more classes involved. Also, while using a web-application is overkill, .Net Aspire makes it easier to create integration tests involving databases.
 
 ## Issue
 
@@ -16,9 +18,11 @@ I want to use EF in a DDD way, so I have aggregate roots and entities.
 
 I want all reads and writes to go via aggregate roots.
 
-So, I have a concurrency token on the aggregate root, and I want to make sure that when I update an entity inside the aggregate root.
+**Key Finding**: After implementing both PostgreSQL and SQL Server versions, it appears that **both database providers exhibit the same behavior**. When you read an aggregate root from the `DbContext` and then add a child entity to the aggregate root, the EF change tracker appears to think the child entity is a modification, not an addition.
 
-I have encouterd the following exception when trying to add a record to a child collection of an aggregate root.
+### PostgreSQL Behavior
+
+I have encountered the following exception when trying to add a record to a child collection of an aggregate root using PostgreSQL:
 
 ```bash
 Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException
@@ -38,20 +42,32 @@ Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException
    at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.<SaveChangesAsync>d__115.MoveNext()
    at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.<ExecuteAsync>d__7`2.MoveNext()
    at Microsoft.EntityFrameworkCore.DbContext.<SaveChangesAsync>d__63.MoveNext()
-   at Pizzeria.Store.Api.Handlers.AddPizzaToOrderHandler.<HandleAsync>d__0.MoveNext() in C:\Users\sajiw\source\repos\postgres-ef-aggregate-root-concurrency\src\Pizzeria.Store.Api\Handlers\AddPizzaToOrderHandler.cs:line 34
+   at Pizzeria.Store.Application.AddPizzaToOrderHandler`1.<HandleAsync>d__0.MoveNext() in C:\Users\sajiw\source\repos\postgres-ef-aggregate-root-concurrency\src\Pizzeria.Store.Application\AddPizzaToOrderHandler.cs:line 37
+
+  This exception was originally thrown at this call stack:
+    [External Code]
+    Pizzeria.Store.Application.AddPizzaToOrderHandler<TDbContext>.HandleAsync(System.Guid, System.Guid, TDbContext, Microsoft.Extensions.Logging.ILogger, System.Threading.CancellationToken) in AddPizzaToOrderHandler.cs
 ```
 
 This works with SQL Server EF Core; it may not evaluate the concurrency token on the aggregate root, but it does not encounter any exception.
+
+**Update**: After implementing SQL Server alongside PostgreSQL (PR #10), it was discovered that SQL Server exhibits the same underlying issue. Both database providers show that the EF change tracker treats child entity additions as modifications when working with aggregate roots.
 
 ## User Case
 
 The applicatio is the start of simple Pizzeria.
 
-`Pizzeria.Store.Api` has 3 endpoints:
+`Pizzeria.Store.Api` has endpoints for both PostgreSQL and SQL Server:
 
-- `GET /pizzas` to get the list of available pizzas on the menu
-- `POST /orders` to create a new order
-- `PUT /orders/{orderId}/pizzas/{pizzaId}` to add a pizza to an existing order
+**PostgreSQL endpoints:**
+- `GET /postgres/pizzas` to get the list of available pizzas on the menu
+- `POST /postgres/orders` to create a new order
+- `PUT /postgres/orders/{orderId}/pizzas/{pizzaId}` to add a pizza to an existing order
+
+**SQL Server endpoints:**
+- `GET /sqlserver/pizzas` to get the list of available pizzas on the menu
+- `POST /sqlserver/orders` to create a new order
+- `PUT /sqlserver/orders/{orderId}/pizzas/{pizzaId}` to add a pizza to an existing order
 
 ## Aspire
 
@@ -70,6 +86,14 @@ Also, the Aspire testing library makes it very easy to write integration tests.
 2. Navigate to the repository folder
 3. Execute `dotnet test --logger console --verbosity:detailed` in the terminal
 
-The first test that just creates an order will pass.
+The tests demonstrate the behavior across both database providers:
 
-The second test that adds a pizza to the order will fail (you can see the exception above if you debug the test as I neglected logging the exception).
+**Tests that create orders (should pass):**
+- `Should_CreateOrder_When_OrderIsPlaced_PostgreSQL` 
+- `Should_CreateOrder_When_OrderIsPlaced_SqlServer`
+
+**Tests that add pizzas to existing orders (demonstrate EF change tracking behavior):**
+- `Should_AddPizzaToOrder_When_PizzaIsAdded_PostgreSQL`
+- `Should_AddPizzaToOrder_When_PizzaIsAdded_SqlServer`
+
+Both "add pizza" tests reveal that the EF change tracker treats child entity additions as modifications when working through aggregate roots, regardless of the database provider used.
