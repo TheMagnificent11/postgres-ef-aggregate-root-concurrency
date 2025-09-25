@@ -4,8 +4,9 @@ using Aspire.Hosting.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Pizzeria.Common;
-using Pizzeria.Store.Api.Data;
-using Pizzeria.Store.Api.Domain;
+using Pizzeria.Store.Api.Postgres;
+using Pizzeria.Store.Api.SqlServer;
+using Pizzeria.Store.Domain;
 using Xunit;
 
 namespace Pizzeria.Tests.Integration;
@@ -17,7 +18,8 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
     private IDistributedApplicationTestingBuilder builder;
     private DistributedApplication app;
     private ResourceNotificationService resourceNotificationService;
-    private StoreDbContext storeDbContext;
+    private StorePostgresDbContext postgresDbContext;
+    private StoreSqlServerDbContext sqlServerDbContext;
 
     public async Task InitializeAsync()
     {
@@ -34,13 +36,19 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
 
         await this.resourceNotificationService
             .WaitForResourceAsync(ServiceNames.PizzaStoreApi, KnownResourceStates.Running)
-            .WaitAsync(TimeSpan.FromMinutes(10)); // 10 minutes because Dockers images may need to be pulled
+            .WaitAsync(TimeSpan.FromMinutes(10)); // 10 minutes because Docker images may need to be pulled
 
-        var storeDbConnectionString = await this.app.GetConnectionStringAsync(ServiceNames.PizzaStoreDatabase);
-        var storeDbOptionsBuilder = new DbContextOptionsBuilder<StoreDbContext>();
-        storeDbOptionsBuilder.UseNpgsql(storeDbConnectionString);
+        // Setup PostgreSQL connection
+        var postgresConnectionString = await this.app.GetConnectionStringAsync(ServiceNames.PizzaStorePostgresDatabase);
+        var postgresOptionsBuilder = new DbContextOptionsBuilder<StorePostgresDbContext>();
+        postgresOptionsBuilder.UseNpgsql(postgresConnectionString);
+        this.postgresDbContext = new StorePostgresDbContext(postgresOptionsBuilder.Options);
 
-        this.storeDbContext = new StoreDbContext(storeDbOptionsBuilder.Options);
+        // Setup SQL Server connection
+        var sqlServerConnectionString = await this.app.GetConnectionStringAsync(ServiceNames.PizzaStoreSqlServerDatabase);
+        var sqlServerOptionsBuilder = new DbContextOptionsBuilder<StoreSqlServerDbContext>();
+        sqlServerOptionsBuilder.UseSqlServer(sqlServerConnectionString);
+        this.sqlServerDbContext = new StoreSqlServerDbContext(sqlServerOptionsBuilder.Options);
     }
 
     public async Task<HttpClient> GetServiceClientAsync(string serviceName)
@@ -54,19 +62,41 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
         return client;
     }
 
-    public async Task<Order> GetLatestOrder()
+    public async Task<Order> GetLatestPostgresOrder()
     {
-        var order = await this.storeDbContext
+        var order = await this.postgresDbContext
             .Orders
-            .OrderByDescending(x => x.ModifiedAtUtc)
+            .Include(x => x.Pizzas)
+            .OrderByDescending(x => x.CreatedAtUtc)
             .FirstOrDefaultAsync();
 
         return order;
     }
 
-    public async Task<Order> GetOrder(Guid orderId)
+    public async Task<Order> GetLatestSqlServerOrder()
     {
-        var order = await this.storeDbContext
+        var order = await this.sqlServerDbContext
+            .Orders
+            .Include(x => x.Pizzas)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .FirstOrDefaultAsync();
+
+        return order;
+    }
+
+    public async Task<Order> GetPostgresOrder(Guid orderId)
+    {
+        var order = await this.postgresDbContext
+            .Orders
+            .Include(x => x.Pizzas)
+            .FirstOrDefaultAsync(x => x.Id == orderId);
+
+        return order;
+    }
+
+    public async Task<Order> GetSqlServerOrder(Guid orderId)
+    {
+        var order = await this.sqlServerDbContext
             .Orders
             .Include(x => x.Pizzas)
             .FirstOrDefaultAsync(x => x.Id == orderId);
@@ -76,9 +106,14 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        if (this.storeDbContext != null)
+        if (this.postgresDbContext != null)
         {
-            await this.storeDbContext.DisposeAsync();
+            await this.postgresDbContext.DisposeAsync();
+        }
+
+        if (this.sqlServerDbContext != null)
+        {
+            await this.sqlServerDbContext.DisposeAsync();
         }
 
         if (this.app != null)

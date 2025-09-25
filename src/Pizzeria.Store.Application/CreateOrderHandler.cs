@@ -1,13 +1,16 @@
-using Pizzeria.Store.Api.Data;
-using Pizzeria.Store.Api.Domain;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Pizzeria.Store.Data;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Handlers;
+namespace Pizzeria.Store.Application;
 
-public class CreateOrderHandler
+public class CreateOrderHandler<TDbContext>
+    where TDbContext : IStoreDbContext
 {
     public static async Task<IResult> HandleAsync(
-        StoreDbContext db,
-        ILogger<CreateOrderHandler> logger,
+        TDbContext db,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         try

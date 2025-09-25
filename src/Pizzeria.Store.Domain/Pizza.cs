@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Pizzeria.Store.Api.Domain;
+namespace Pizzeria.Store.Domain;
 
 public class Pizza : AggregateRoot
 {

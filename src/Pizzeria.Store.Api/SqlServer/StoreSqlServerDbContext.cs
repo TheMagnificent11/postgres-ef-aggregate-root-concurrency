@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pizzeria.Store.Api.Domain;
+using Pizzeria.Store.Data;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Data;
+namespace Pizzeria.Store.Api.SqlServer;
 
-public sealed class StoreDbContext : DbContext
+public sealed class StoreSqlServerDbContext : DbContext, IStoreDbContext
 {
     public const string SchemaName = "sto";
 
-    public StoreDbContext(DbContextOptions<StoreDbContext> options)
+    public StoreSqlServerDbContext(DbContextOptions<StoreSqlServerDbContext> options)
         : base(options)
     {
     }
@@ -22,6 +23,6 @@ public sealed class StoreDbContext : DbContext
 
         modelBuilder.HasDefaultSchema(SchemaName);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(StoreDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(IStoreDbContext).Assembly);
     }
 }

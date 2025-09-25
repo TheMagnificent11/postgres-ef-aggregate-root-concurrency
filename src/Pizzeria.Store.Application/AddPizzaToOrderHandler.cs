@@ -1,16 +1,19 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Pizzeria.Store.Api.Data;
-using Pizzeria.Store.Api.Domain;
+using Microsoft.Extensions.Logging;
+using Pizzeria.Store.Data;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Handlers;
+namespace Pizzeria.Store.Application;
 
-public class AddPizzaToOrderHandler
+public class AddPizzaToOrderHandler<TDbContext>
+    where TDbContext : IStoreDbContext
 {
     public static async Task<IResult> HandleAsync(
         Guid orderId,
         Guid pizzaId,
-        StoreDbContext db,
-        ILogger<AddPizzaToOrderHandler> logger,
+        TDbContext db,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         try

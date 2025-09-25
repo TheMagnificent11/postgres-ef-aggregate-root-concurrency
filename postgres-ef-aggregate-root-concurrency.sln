@@ -23,6 +23,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.AppHost", "src\Piz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.Tests.Integration", "tests\Pizzeria.Tests.Integration\Pizzeria.Tests.Integration.csproj", "{65456587-89D0-94FB-6A90-AFCE78AB10B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.Store.Domain", "src\Pizzeria.Store.Domain\Pizzeria.Store.Domain.csproj", "{A3B0B899-8099-430F-97A6-D924118B475A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.Store.Data", "src\Pizzeria.Store.Data\Pizzeria.Store.Data.csproj", "{3EA48734-86AC-4E9B-961A-992C660D63EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.Store.Application", "src\Pizzeria.Store.Application\Pizzeria.Store.Application.csproj", "{E01DA918-644F-40BC-87C5-0B4179F23C67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +55,18 @@ Global
 		{65456587-89D0-94FB-6A90-AFCE78AB10B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65456587-89D0-94FB-6A90-AFCE78AB10B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65456587-89D0-94FB-6A90-AFCE78AB10B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3B0B899-8099-430F-97A6-D924118B475A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3B0B899-8099-430F-97A6-D924118B475A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3B0B899-8099-430F-97A6-D924118B475A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3B0B899-8099-430F-97A6-D924118B475A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EA48734-86AC-4E9B-961A-992C660D63EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EA48734-86AC-4E9B-961A-992C660D63EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EA48734-86AC-4E9B-961A-992C660D63EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EA48734-86AC-4E9B-961A-992C660D63EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E01DA918-644F-40BC-87C5-0B4179F23C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01DA918-644F-40BC-87C5-0B4179F23C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E01DA918-644F-40BC-87C5-0B4179F23C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E01DA918-644F-40BC-87C5-0B4179F23C67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

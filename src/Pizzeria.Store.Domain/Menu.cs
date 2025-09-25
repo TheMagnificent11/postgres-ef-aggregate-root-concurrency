@@ -1,4 +1,4 @@
-﻿namespace Pizzeria.Store.Api.Domain;
+﻿namespace Pizzeria.Store.Domain;
 
 public static class Menu
 {

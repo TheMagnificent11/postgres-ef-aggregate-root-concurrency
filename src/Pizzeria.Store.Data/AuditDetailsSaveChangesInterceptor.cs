@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Pizzeria.Store.Api.Domain;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Data;
+namespace Pizzeria.Store.Data;
 
 public sealed class AuditDetailsSaveChangesInterceptor : SaveChangesInterceptor
 {

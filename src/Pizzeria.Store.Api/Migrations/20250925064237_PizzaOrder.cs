@@ -29,8 +29,7 @@ public partial class PizzaOrder : Migration
                 CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 ModifiedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                 ModifiedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
+                IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
             },
             constraints: table =>
             {
@@ -50,8 +49,7 @@ public partial class PizzaOrder : Migration
                 CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 ModifiedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                 ModifiedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
+                IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
             },
             constraints: table =>
             {

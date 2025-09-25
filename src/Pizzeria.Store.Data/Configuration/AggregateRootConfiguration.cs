@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Pizzeria.Store.Api.Domain;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Data.Configuration;
+namespace Pizzeria.Store.Data.Configuration;
 
 public abstract class AggregateRootConfiguration<T> : EntityConfiguration<T>
     where T : AggregateRoot
@@ -11,7 +11,6 @@ public abstract class AggregateRootConfiguration<T> : EntityConfiguration<T>
     {
         base.Configure(builder);
 
-        builder.Property(x => x.Version)
-            .IsRowVersion();
+        // Note: Version property removed as per requirements - no concurrency tokens
     }
 }

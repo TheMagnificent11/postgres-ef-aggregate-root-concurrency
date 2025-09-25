@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Pizzeria.Store.Api.Data;
+namespace Pizzeria.Store.Data;
 
 public interface IDatabaseSeeder<TDbContext>
     where TDbContext : DbContext

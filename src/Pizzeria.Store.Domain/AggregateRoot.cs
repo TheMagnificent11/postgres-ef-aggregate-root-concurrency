@@ -1,4 +1,4 @@
-﻿namespace Pizzeria.Store.Api.Domain;
+﻿namespace Pizzeria.Store.Domain;
 
 public abstract class AggregateRoot : Entity
 {
@@ -13,5 +13,5 @@ public abstract class AggregateRoot : Entity
     {
     }
 
-    public uint Version { get; protected set; }
+    // Note: Version property removed as per requirements
 }

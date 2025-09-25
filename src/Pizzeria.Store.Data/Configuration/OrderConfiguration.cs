@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Pizzeria.Store.Api.Domain;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Data.Configuration;
+namespace Pizzeria.Store.Data.Configuration;
 
 public sealed class OrderConfiguration : AggregateRootConfiguration<Order>
 {

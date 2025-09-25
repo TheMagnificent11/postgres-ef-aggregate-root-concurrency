@@ -1,19 +1,22 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Pizzeria.Store.Api.Data;
+using Microsoft.Extensions.Logging;
+using Pizzeria.Store.Data;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Handlers;
+namespace Pizzeria.Store.Application;
 
-public class GetPizzasHandler
+public class GetPizzasHandler<TDbContext>
+    where TDbContext : IStoreDbContext
 {
     public static async Task<IResult> HandleAsync(
-        StoreDbContext db,
-        ILogger<GetPizzasHandler> logger,
+        TDbContext db,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         try
         {
             var pizzas = await db.Pizzas.ToListAsync(cancellationToken);
-
             return Results.Ok(pizzas);
         }
         catch (Exception ex)

@@ -1,12 +1,14 @@
-﻿using Pizzeria.Store.Api.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Data;
+namespace Pizzeria.Store.Data;
 
-public sealed class StoreSeeder : IDatabaseSeeder<StoreDbContext>
+public sealed class StoreSeeder<TDbContext> : IDatabaseSeeder<TDbContext>
+    where TDbContext : DbContext, IStoreDbContext
 {
-    private readonly StoreDbContext dbContext;
+    private readonly TDbContext dbContext;
 
-    public StoreSeeder(StoreDbContext dbContext)
+    public StoreSeeder(TDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
@@ -37,4 +39,3 @@ public sealed class StoreSeeder : IDatabaseSeeder<StoreDbContext>
         await this.dbContext.SaveChangesAsync(cancellationToken);
     }
 }
-

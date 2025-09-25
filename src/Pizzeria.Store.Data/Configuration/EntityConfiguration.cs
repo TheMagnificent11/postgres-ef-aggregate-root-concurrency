@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Pizzeria.Store.Api.Domain;
+using Pizzeria.Store.Domain;
 
-namespace Pizzeria.Store.Api.Data.Configuration;
+namespace Pizzeria.Store.Data.Configuration;
 
 public abstract class EntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : Entity
