@@ -18,6 +18,7 @@ public class Order : AggregateRoot
     private Order()
         : base()
     {
+        this.pizzas = [];
     }
 
     public string UserId { get; protected set; }
@@ -53,7 +54,8 @@ public class Order : AggregateRoot
 
         if (existingOrderPizza is null)
         {
-            this.pizzas.Add(OrderPizza.CreateForOrder(this, pizza));
+            var newOrderPizza = OrderPizza.CreateForOrder(this, pizza);
+            this.pizzas.Add(newOrderPizza);
             return;
         }
 
