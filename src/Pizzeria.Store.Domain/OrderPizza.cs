@@ -20,7 +20,9 @@ public class OrderPizza
         {
             Id = Guid.NewGuid(),
             OrderId = order.Id,
+            Order = order,
             PizzaId = pizza.Id,
+            Pizza = pizza,
             Quantity = 1
         };
     }

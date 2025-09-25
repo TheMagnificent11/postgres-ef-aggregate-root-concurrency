@@ -18,6 +18,7 @@ public class Order : AggregateRoot
     private Order()
         : base()
     {
+        this.pizzas = [];
     }
 
     public string UserId { get; protected set; }
