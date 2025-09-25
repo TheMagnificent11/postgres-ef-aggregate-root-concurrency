@@ -7,12 +7,12 @@ var postgresServer = builder.AddPostgres(ServiceNames.PostgresServer);
 var pizzaStorePostgresDatabase = postgresServer.AddDatabase(ServiceNames.PizzaStorePostgresDatabase);
 
 // SQL Server server and database
-var sqlServerServer = builder.AddSqlServer(ServiceNames.SqlServerServer);
-var pizzaStoreSqlServerDatabase = sqlServerServer.AddDatabase(ServiceNames.PizzaStoreSqlServerDatabase);
+//var sqlServerServer = builder.AddSqlServer(ServiceNames.SqlServerServer);
+//var pizzaStoreSqlServerDatabase = sqlServerServer.AddDatabase(ServiceNames.PizzaStoreSqlServerDatabase);
 
 builder.AddProject<Projects.Pizzeria_Store_Api>(ServiceNames.PizzaStoreApi)
-    .WithReference(pizzaStorePostgresDatabase)
-    .WithReference(pizzaStoreSqlServerDatabase);
+    .WithReference(pizzaStorePostgresDatabase);
+    //.WithReference(pizzaStoreSqlServerDatabase);
 
 var app = builder.Build();
 

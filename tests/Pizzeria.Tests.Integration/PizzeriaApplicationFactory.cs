@@ -19,7 +19,7 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
     private DistributedApplication app;
     private ResourceNotificationService resourceNotificationService;
     private StorePostgresDbContext postgresDbContext;
-    private StoreSqlServerDbContext sqlServerDbContext;
+    //private StoreSqlServerDbContext sqlServerDbContext;
 
     public async Task InitializeAsync()
     {
@@ -45,10 +45,10 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
         this.postgresDbContext = new StorePostgresDbContext(postgresOptionsBuilder.Options);
 
         // Setup SQL Server connection
-        var sqlServerConnectionString = await this.app.GetConnectionStringAsync(ServiceNames.PizzaStoreSqlServerDatabase);
-        var sqlServerOptionsBuilder = new DbContextOptionsBuilder<StoreSqlServerDbContext>();
-        sqlServerOptionsBuilder.UseSqlServer(sqlServerConnectionString);
-        this.sqlServerDbContext = new StoreSqlServerDbContext(sqlServerOptionsBuilder.Options);
+        //var sqlServerConnectionString = await this.app.GetConnectionStringAsync(ServiceNames.PizzaStoreSqlServerDatabase);
+        //var sqlServerOptionsBuilder = new DbContextOptionsBuilder<StoreSqlServerDbContext>();
+        //sqlServerOptionsBuilder.UseSqlServer(sqlServerConnectionString);
+        //this.sqlServerDbContext = new StoreSqlServerDbContext(sqlServerOptionsBuilder.Options);
     }
 
     public async Task<HttpClient> GetServiceClientAsync(string serviceName)
@@ -73,16 +73,16 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
         return order;
     }
 
-    public async Task<Order> GetLatestSqlServerOrder()
-    {
-        var order = await this.sqlServerDbContext
-            .Orders
-            .Include(x => x.Pizzas)
-            .OrderByDescending(x => x.CreatedAtUtc)
-            .FirstOrDefaultAsync();
+    //public async Task<Order> GetLatestSqlServerOrder()
+    //{
+    //    var order = await this.sqlServerDbContext
+    //        .Orders
+    //        .Include(x => x.Pizzas)
+    //        .OrderByDescending(x => x.CreatedAtUtc)
+    //        .FirstOrDefaultAsync();
 
-        return order;
-    }
+    //    return order;
+    //}
 
     public async Task<Order> GetPostgresOrder(Guid orderId)
     {
@@ -94,15 +94,15 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
         return order;
     }
 
-    public async Task<Order> GetSqlServerOrder(Guid orderId)
-    {
-        var order = await this.sqlServerDbContext
-            .Orders
-            .Include(x => x.Pizzas)
-            .FirstOrDefaultAsync(x => x.Id == orderId);
+    //public async Task<Order> GetSqlServerOrder(Guid orderId)
+    //{
+    //    var order = await this.sqlServerDbContext
+    //        .Orders
+    //        .Include(x => x.Pizzas)
+    //        .FirstOrDefaultAsync(x => x.Id == orderId);
 
-        return order;
-    }
+    //    return order;
+    //}
 
     public async Task DisposeAsync()
     {
@@ -111,10 +111,10 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
             await this.postgresDbContext.DisposeAsync();
         }
 
-        if (this.sqlServerDbContext != null)
-        {
-            await this.sqlServerDbContext.DisposeAsync();
-        }
+        //if (this.sqlServerDbContext != null)
+        //{
+        //    await this.sqlServerDbContext.DisposeAsync();
+        //}
 
         if (this.app != null)
         {

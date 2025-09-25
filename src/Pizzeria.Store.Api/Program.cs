@@ -20,12 +20,12 @@ builder.Services
     .AddDatabaseSeeder<StorePostgresDbContext, StoreSeeder<StorePostgresDbContext>>();
 
 // Configure SQL Server database  
-builder.Services
-    .AddSqlServer<StoreSqlServerDbContext>(
-        builder.Configuration.GetConnectionString(ServiceNames.PizzaStoreSqlServerDatabase)!,
-        StoreSqlServerDbContext.SchemaName,
-        builder.Environment.IsDevelopment())
-    .AddDatabaseSeeder<StoreSqlServerDbContext, StoreSeeder<StoreSqlServerDbContext>>();
+//builder.Services
+//    .AddSqlServer<StoreSqlServerDbContext>(
+//        builder.Configuration.GetConnectionString(ServiceNames.PizzaStoreSqlServerDatabase)!,
+//        StoreSqlServerDbContext.SchemaName,
+//        builder.Environment.IsDevelopment())
+//    .AddDatabaseSeeder<StoreSqlServerDbContext, StoreSeeder<StoreSqlServerDbContext>>();
 
 var app = builder.Build();
 
@@ -55,6 +55,6 @@ app.MapPut(Endpoints.SqlServerStoreApi.AddPizzaToOrder, async (Guid orderId, Gui
 
 // Migrate and seed both databases
 await app.Services.MigrateDatabaseAsync<StorePostgresDbContext>(seedData: true);
-await app.Services.MigrateDatabaseAsync<StoreSqlServerDbContext>(seedData: true);
+//await app.Services.MigrateDatabaseAsync<StoreSqlServerDbContext>(seedData: true);
 
 await app.RunAsync();
