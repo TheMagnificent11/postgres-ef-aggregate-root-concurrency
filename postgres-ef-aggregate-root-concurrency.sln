@@ -23,8 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.AppHost", "src\Piz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.Tests.Integration", "tests\Pizzeria.Tests.Integration\Pizzeria.Tests.Integration.csproj", "{65456587-89D0-94FB-6A90-AFCE78AB10B5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{85DBA21E-0DF6-4475-B0A2-B24F3DB4D198}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.Store.Domain", "src\Pizzeria.Store.Domain\Pizzeria.Store.Domain.csproj", "{A3B0B899-8099-430F-97A6-D924118B475A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.Store.Data", "src\Pizzeria.Store.Data\Pizzeria.Store.Data.csproj", "{3EA48734-86AC-4E9B-961A-992C660D63EA}"
@@ -75,10 +73,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FB051ECE-D919-4B6E-9A8F-BCDD36904932}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A3B0B899-8099-430F-97A6-D924118B475A} = {85DBA21E-0DF6-4475-B0A2-B24F3DB4D198}
-		{3EA48734-86AC-4E9B-961A-992C660D63EA} = {85DBA21E-0DF6-4475-B0A2-B24F3DB4D198}
-		{E01DA918-644F-40BC-87C5-0B4179F23C67} = {85DBA21E-0DF6-4475-B0A2-B24F3DB4D198}
 	EndGlobalSection
 EndGlobal
