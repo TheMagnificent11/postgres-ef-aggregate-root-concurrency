@@ -124,7 +124,7 @@ public sealed class PizzeriaApplicationFactory : IAsyncLifetime
 
         if (this.builder != null)
         {
-            // await this.builder.DisposeAsync(); // Not available in .NET 8 Aspire
+            await this.builder.DisposeAsync();
         }
     }
 }
