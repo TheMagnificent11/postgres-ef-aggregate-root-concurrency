@@ -10,15 +10,13 @@ This repository initially was created to investigate differences between Postgre
 
 However, after adding SQL Server implementation (PR #10), it was discovered that both PostgreSQL and SQL Server exhibit the same behavior: when adding child entities to an aggregate root, the EF change tracker appears to treat the child entity addition as a modification rather than an addition.
 
-This is repository with a more minimal (I understand that this is not exactly minimal, but I wanted to keep the code as close as possible to my real project) example that reproduces the issue with both database providers.
+This repository attempts to create a minimal reproduction, but due to the complexity of the user-case, there are a lot more classes involved. Also, while using a web-application is overkill, .Net Aspire makes it easier to create integration tests involving databases.
 
 ## Issue
 
 I want to use EF in a DDD way, so I have aggregate roots and entities.
 
 I want all reads and writes to go via aggregate roots.
-
-So, I have a concurrency token on the aggregate root, and I want to make sure that when I update an entity inside the aggregate root.
 
 **Key Finding**: After implementing both PostgreSQL and SQL Server versions, it appears that **both database providers exhibit the same behavior**. When you read an aggregate root from the `DbContext` and then add a child entity to the aggregate root, the EF change tracker appears to think the child entity is a modification, not an addition.
 
@@ -44,7 +42,11 @@ Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException
    at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.<SaveChangesAsync>d__115.MoveNext()
    at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.<ExecuteAsync>d__7`2.MoveNext()
    at Microsoft.EntityFrameworkCore.DbContext.<SaveChangesAsync>d__63.MoveNext()
-   at Pizzeria.Store.Api.Handlers.AddPizzaToOrderHandler.<HandleAsync>d__0.MoveNext() in C:\Users\sajiw\source\repos\postgres-ef-aggregate-root-concurrency\src\Pizzeria.Store.Api\Handlers\AddPizzaToOrderHandler.cs:line 34
+   at Pizzeria.Store.Application.AddPizzaToOrderHandler`1.<HandleAsync>d__0.MoveNext() in C:\Users\sajiw\source\repos\postgres-ef-aggregate-root-concurrency\src\Pizzeria.Store.Application\AddPizzaToOrderHandler.cs:line 37
+
+  This exception was originally thrown at this call stack:
+    [External Code]
+    Pizzeria.Store.Application.AddPizzaToOrderHandler<TDbContext>.HandleAsync(System.Guid, System.Guid, TDbContext, Microsoft.Extensions.Logging.ILogger, System.Threading.CancellationToken) in AddPizzaToOrderHandler.cs
 ```
 
 This works with SQL Server EF Core; it may not evaluate the concurrency token on the aggregate root, but it does not encounter any exception.
