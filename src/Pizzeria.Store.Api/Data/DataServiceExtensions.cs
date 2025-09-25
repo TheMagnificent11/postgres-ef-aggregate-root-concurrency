@@ -14,7 +14,7 @@ public static class DataServiceExtensions
         where T : DbContext
     {
         services
-            .AddDbContextFactory<T>((provider, options) =>
+            .AddDbContext<T>((provider, options) =>
             {
                 options.UseNpgsql(
                     connectionString,
@@ -53,7 +53,7 @@ public static class DataServiceExtensions
         where T : DbContext
     {
         services
-            .AddDbContextFactory<T>((provider, options) =>
+            .AddDbContext<T>((provider, options) =>
             {
                 options.UseSqlServer(
                     connectionString,
@@ -115,7 +115,7 @@ public static class DataServiceExtensions
                 return;
             }
 
-            await dbContext.Database.MigrateAsync(cancellationTokenSource.Token);
+            await dbContext.Database.EnsureCreatedAsync(cancellationTokenSource.Token);
 
             if (!seedData)
             {
